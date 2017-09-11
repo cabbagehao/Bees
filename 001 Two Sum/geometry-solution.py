@@ -1,4 +1,3 @@
-# 原题链接： https://leetcode.com/problems/two-sum/description
 # 将nums里所有元素都放在 y=x 这条直线上
 # 设y = -x + target直线 与 y=x直线的交点为(a, a)
 # 可以得到所求的2个元素与交点距离相同，由于nums所有元素都在y=x上，即是 |x1 - a| == |x2 - a|
