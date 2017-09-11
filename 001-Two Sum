@@ -1,0 +1,20 @@
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+
+        d_dict = {}
+        intersection_x = 1.0 * target / 2
+
+        for i in range(len(nums)):
+            d = abs(nums[i] - intersection_x)
+            if d_dict.has_key(d):
+                if nums[d_dict[d]] + nums[i] != target:
+                    continue
+                else:
+                    return [d_dict[d], i]
+            else:
+                d_dict[d] = i
