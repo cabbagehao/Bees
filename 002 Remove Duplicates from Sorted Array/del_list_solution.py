@@ -16,4 +16,10 @@ class Solution(object):
             nums.pop(0)
 
         return len(nums)
+    
+    
+# for循环遍历时删除导致索引变化，解决办法：
+# 1. while，  删除后i -= 1
+# 2. for 倒序删除
+# 3. 遍历拷贝的list，删除原始的list    
         
