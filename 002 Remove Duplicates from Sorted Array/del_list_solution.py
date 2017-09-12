@@ -1,5 +1,4 @@
 # 尝试了删除多余元素的方法， 结果是del删除会更快。 
-# 但对于题目设定，发现交换元素能够更快。
 
 class Solution(object):
     def removeDuplicates(self, nums):
