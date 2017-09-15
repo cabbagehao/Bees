@@ -12,19 +12,17 @@ now = time.time()
 def findPairs(nums, k):
     if k < 0:
         return 0
+
+    count = 0
+    nums_set = set(nums)
     if k == 0:
-        count = 0
-        for item in set(nums):
+        for item in nums_set:
             if nums.count(item) > 1:
                 count += 1
         return count
 
-
-    nums = set(sorted(nums))
-    count = 0
-    for item in nums:
-        item_plus = item + k
-        if item_plus in nums:
+    for item in nums_set:
+        if item + k in nums_set:
             count += 1
 
     return count
