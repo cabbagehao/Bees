@@ -1,0 +1,126 @@
+# -*- coding: UTF-8 -*-
+import time
+import math
+# TODO n-1不能用i遍历到，导致在n-2时flag切换后缺失了对m的更新，经过testcase13验证出来后已修改。
+# 感觉此方法需要重构。 不这样先判断falg再比较，而应该在比较过程中判断flag
+# max <= nums[end]
+# min >= nums[start] 
+
+# M_flag = True,  需要继续找M
+# N_flag = False，不需要继续找N
+
+# 0. 若nums[i+1] >= nums[i]  pass
+# 1. M_flag and nums[i+1] < nums[i]:
+#     1. 若nums[i+1] < min: start往前查找， nums[m] < nums[i+1], m+1即为新start
+#     2. N_flag = True, 需要找到新的N
+#     3. max = nums[i]
+# 2.  N_flag and 往后查找，nums[n] > max, end即为新N，  
+#         N_flag = False，不需要继续找N了
+#         M_flag = True, 继续找M
+
+
+def findUnsortedSubarray(nums,  case_id):
+    """
+    :type nums: List[int]
+    :rtype: int
+    """
+    if nums == []:
+        return 0
+    M_flag = True   # 需要继续找M
+    N_flag = False  # 不需要继续找N
+    min_num = 20000 # sys.maxint will increase to 9ms when use 20000 is only 6ms.
+    max_num = -20000
+    m = None    # m储存列表开始下标
+    n = None    # n储存列表结束下标
+    for i in range(len(nums)-1):
+        if M_flag:
+            if nums[i+1] < nums[i]:
+                # 若比最小值小，则往前查找小于num[i+1]的值作为m   [1,3,5,4,2]
+                if nums[i+1] < min_num:
+                    if m is None: m = i
+                    m = find_lower_pos(nums, m, nums[i+1])
+                    min_num = nums[i+1] 
+
+                if nums[i] > max_num : max_num = nums[i]
+                M_flag = False
+                N_flag = True
+
+        if N_flag:
+            if nums[i+1] >= max_num:
+                n = i
+                M_flag = True
+                N_flag = False           
+            # 如果最后的值比min_num小，则需要更新m
+            # 因为i=len(num)-1 不会被遍历到，所以即使此时切换flag也需要手动更新m  [2,5,4,1,3]
+            if i+1 == len(nums) - 1:  
+                temp = min(nums[i], nums[i+1])
+                if temp < min_num and m is not None:
+                    m = find_lower_pos(nums, m, temp)
+                # 如果最后一个还是小于，则置n
+                if nums[i+1] < max_num:
+                    n = len(nums) - 1
+
+    if case_id == 18:
+        print m, n, min_num, max_num
+    return 0 if m is None and n is None else n - m + 1
+
+def find_lower_pos(nums, pos, target):
+    for j in range(pos, -1, -1):
+        if nums[j] <= target:
+            pos = j+1   
+            break
+        if j == 0:
+            pos = 0
+
+    return pos
+
+test_list1 = []
+test_list2 = []
+max_test = 10000
+for i in range(max_test):
+    a = i if i%2 ==0 else -i                 # 0 -1 2 -3 4 
+    b = i if i < max_test/2 else max_test-i  # 0 1 2 3 4 3 2 1
+    test_list1.append(a)
+    test_list2.append(b)
+
+test_list3 = [0] * max_test  # 1 3 5 6 4 2
+for i in range(int(math.ceil(max_test / 2))):
+    test_list3[-i] = 2*i+1     
+    test_list3[i] = 2*i 
+    
+
+testcases = [
+                [ [], 0],                           # [] 
+                [ [1,2,3,4,5], 0],                  # normal increase
+                [ [2, 6, 4, 8, 10], 2],             # one decrease, num[i-1] > num[i+1] 
+                [ [2, 6, 1, 8, 10], 3],             # one decrease, num[i-1] < num[i+1]
+                [ [2, 6, 2, 8, 10], 2],             # one decrease, num[i-1] == num[i+1]
+                [ [6, 2, 8, 10], 2],                # one decrease, num[i-1] not exist
+                [ [6, 7, 8, 2], 4],                 # one decrease, N_flag branch 2.
+                [ [1,2,4,3,5,6,3], 5],              # 2 decrease, num[i+1] >= min_num
+                [ [1,2,4,3,5,6,2], 5],              # 2 decrease, num[i+1] < min_num, num[i+1] == num[m-1]
+                [ [1,2,4,3,5,6,1], 6],              # 2 decrease, num[i+1] < min_num, num[i+1] < num[m-1]
+                [ test_list1, max_test],            # performance  N_flag和M_flag流程交替，但是m不会移动。
+                [ test_list2, max_test-2],          # performance  从max_test/2开始，每次走N_flag brach2
+                [ test_list3, max_test-1],          # performance 每次M_flag都走完整流程
+                [ [1,3,5,4,2], 4],                  # Failed case added.  N_flag里应该判断并更新m
+                [ [2,4,3,1,5], 4],                  # Failed case added.  n-2时flag切换无效，需要单独处理
+                [ [2,6,4,8,10,9,15], 5],            # Failed case added. 状态变化问题
+                [ [2,5,3,1,4], 5],                  # Failed case added. n-2处理
+                [ [2,5,4,1,3], 5],                  # Failed case added. n-2处理
+                [ [1,2,3,4,5,5,4,3,2,1,1,2,3,4,5], 13] # Failed case added. 
+                
+            ]
+
+now = time.time()
+for case in testcases:
+    nums = case[0]
+    expect = case[1]
+    case_id = testcases.index(case)
+    ret = findUnsortedSubarray(nums, case_id)
+    if expect != ret:
+        print "Test Case ", case_id, "Failed. ", expect, ret
+
+end = time.time()
+print "%.3f ms" %((end - now) * 1000)
+
