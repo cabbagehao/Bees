@@ -14,6 +14,9 @@
 # 开1平方计算4次， 开1001平方计算8次， 1000000 -- 13     100000000 -- 17. 可以看到非常的高效。
 
 def sqrt_cacl_newton(num, case_id):
+    if num < 0:
+        return False
+    
     x = 1.0*num / 2
     while abs(x**2 - num) > 0.0001:
         xn = x - (x**2 - num) / (2*x)
