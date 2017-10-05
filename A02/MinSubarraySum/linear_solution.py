@@ -9,7 +9,26 @@ def minimum_subarray_sum(nums, case_id):
     for i in range(len(nums)):
         this_sum += nums[i]
  
-        if min_sum < this_sum:
+        if this_sum < min_sum:
             min_sum = this_sum   
         elif this_sum > 0:
             this_sum = 0
+    return min_sum
+
+
+# [[nums, target, expect]]
+TestCase = [    [[1], 1],
+                [[1, 2, 3], 1],
+                [[1,2,-1,-2], -3],                
+            ]           
+
+
+
+
+for i in range(len(TestCase)):
+    testcase = TestCase[i]
+    nums = testcase[0]
+    expect = testcase[1]
+    ret = minimum_subarray_sum(nums, i)
+    if abs(expect - ret) > 0.0001:
+        print 'Test Case ', i, ' failed.', expect, ret
