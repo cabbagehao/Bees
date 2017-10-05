@@ -30,3 +30,9 @@ def gcd(a, b):
         a = b
         b = rem
     return a
+  
+# 有了开头的证明，求最小公约数就非常简单了。
+def lcm(a, b):
+{  
+    return a * b / gcd(a, b);  
+}  
