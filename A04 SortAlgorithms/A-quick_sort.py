@@ -68,11 +68,7 @@ def check_sort(nums):
 for i in range(len(TestCase)):
     testcase = TestCase[i]
     nums = testcase
-    #expect = testcase[1]
     quick_sort(nums, 0, len(nums)-1, i)
     ret = nums
-    #if abs(expect - ret) > 0.0001:
-     #   print 'Test Case ', i, ' failed.', expect, ret
-    #print ret
     if not check_sort(ret):
         print 'Test Case ', i, ' failed.',  ret
